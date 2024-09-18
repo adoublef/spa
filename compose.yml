@@ -6,8 +6,9 @@ services:
     image: adoublef/spa:0.1.0
     build:
       context: .
-      args:
-        - REGISTRY=cgr.dev
+      # uncomment to use chainguard registry instead
+      # args:
+      #   - REGISTRY=cgr.dev
       platforms:
         - linux/arm64
         - linux/amd64

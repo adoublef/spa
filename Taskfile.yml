@@ -19,12 +19,12 @@ tasks:
       - down
       - tidy
     cmds:
-      - docker compose up -d --build --force-recreate
+      - docker compose up -d --build --force-recreate {{.CLI_ARGs}}
 
   down:
     desc: stop services
     cmds:
-      - docker compose down --volumes
+      - docker compose down --volumes {{.CLI_ARGs}}
 
   dangle:
     desc: remove dangling images
