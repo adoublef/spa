@@ -17,6 +17,7 @@ var cmdServe = &serve{}
 
 type serve struct {
 	Addr string
+	// todo: static files
 }
 
 func (c *serve) parse(args []string, _ func(string) string) error {
