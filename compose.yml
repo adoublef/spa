@@ -1,0 +1,17 @@
+networks:
+  intranet:
+
+services:
+  a.out:
+    image: adoublef/spa:0.1.0
+    build:
+      context: .
+      args:
+        - REGISTRY=cgr.dev
+      platforms:
+        - linux/arm64
+        - linux/amd64
+    command: ["serve", "-addr", ":8080"]
+    ports:
+      - 8080:8080
+    restart: unless-stopped

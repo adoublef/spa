@@ -1,0 +1,42 @@
+version: "3"
+
+silent: true
+
+tasks:
+  default:
+    desc: list tasks
+    cmds:
+      - task --list-all
+
+  tidy:
+    desc: tidy deps
+    cmds:
+      - go mod tidy
+
+  up:
+    desc: run services
+    deps:
+      - down
+      - tidy
+    cmds:
+      - docker compose up -d --build --force-recreate
+
+  down:
+    desc: stop services
+    cmds:
+      - docker compose down --volumes
+
+  dangle:
+    desc: remove dangling images
+    cmds:
+      - docker rmi $(docker images -f 'dangling=true' -q)
+
+  prune:
+    desc: prune containers
+    cmds:
+      - docker system prune -af
+
+  logs:
+    desc: run logs
+    cmds:
+      - docker compose logs -f {{.CLI_ARGS}}
