@@ -2,6 +2,9 @@ package http
 
 import "net/http"
 
-type Server = http.Server
+type (
+	Dir    = http.Dir
+	Server = http.Server
+)
 
 var ErrServerClosed = http.ErrServerClosed

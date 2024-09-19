@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1.7-labs
+
 # (i.e. 'cgr.dev', 'docker.io')
 ARG REGISTRY=docker.io
 
@@ -15,10 +17,9 @@ RUN --mount=target=. \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     go mod download
-
 FROM go AS build
-
-COPY . .
+# exclude pulling in the content of www
+COPY --exclude=www . .
 RUN --mount=target=. \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
@@ -27,6 +28,7 @@ RUN --mount=target=. \
     -ldflags="-s -w -extldflags=-static" \
     -o=/usr/local/bin/a.out ./cmd/spa/
 
+# note: there will be deployment friendly stage with bundle copied directly
 FROM ${REGISTRY}/chainguard/cc-dynamic
 
 COPY --from=build /usr/local/bin /usr/local/bin

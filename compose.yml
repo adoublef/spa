@@ -12,7 +12,9 @@ services:
       platforms:
         - linux/arm64
         - linux/amd64
-    command: ["serve", "-addr", ":8080"]
+    command: ["serve", "-addr", ":8080", "/www"]
     ports:
       - 8080:8080
+    volumes:
+      - ./www:/www
     restart: unless-stopped

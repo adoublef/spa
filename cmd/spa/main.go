@@ -29,10 +29,12 @@ func main() {
 
 func run(ctx context.Context, args []string, getenv func(string) string) error {
 	var cmd string
-	if len(args) > 1 {
+	if len(args) > 0 {
 		cmd, args = args[0], args[1:]
 	}
 	for name, c := range cmds {
+		// todo: handle help command
+		// https://github.com/superfly/litefs/blob/main/cmd/litefs/main.go#L72C1-L77C55
 		if name != cmd {
 			continue
 		}

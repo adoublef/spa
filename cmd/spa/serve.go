@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"net"
 	"os"
 	"os/signal"
@@ -17,16 +18,35 @@ var cmdServe = &serve{}
 
 type serve struct {
 	Addr string
-	// todo: static files
+	Path http.Dir
 }
 
 func (c *serve) parse(args []string, _ func(string) string) error {
 	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
 	fs.StringVar(&c.Addr, "addr", ":80", "http listening port")
-	err := fs.Parse(args)
-	if err != nil {
-		return err
+	fs.Usage = func() {
+		fmt.Println(`
+The export command will start the server.
+
+Usage:
+
+	serve [arguments] PATH
+
+Arguments:
+`[1:])
+		fs.PrintDefaults()
+		fmt.Println("")
 	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	} else if fs.NArg() == 0 {
+		fs.Usage()
+		return flag.ErrHelp
+	} else if fs.NArg() > 1 {
+		return fmt.Errorf("too many arguments")
+	}
+	// i could use parse another flag but a positional arg is cool
+	c.Path = http.Dir(fs.Arg(0))
 	return nil
 }
 
@@ -36,7 +56,7 @@ func (c *serve) run(ctx context.Context) error {
 
 	s := &http.Server{
 		Addr:        c.Addr,
-		Handler:     http.Handler(),
+		Handler:     http.Handler(c.Path),
 		BaseContext: func(l net.Listener) context.Context { return ctx },
 		// todo: timeouts
 	}
@@ -77,4 +97,19 @@ func (c *serve) run(ctx context.Context) error {
 		return err
 	}
 	return nil
+}
+
+// printUsage prints the help screen to STDOUT.
+func printUsage() {
+	fmt.Println(`
+a.out is a single page application hosted on a simple web server.
+
+Usage:
+
+	a.out <command> [arguments]
+
+The commands are:
+
+	serve       start web server
+`[1:])
 }
